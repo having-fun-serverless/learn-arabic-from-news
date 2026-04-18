@@ -22,7 +22,8 @@ dev = [
 [tool.taskipy.tasks]
 lint = "ruff check . && ruff format --check ."
 format = "ruff format . && ruff check --fix ."
-test = "pytest tests/ || test $? -eq 5"
+test = "pytest tests/ -m 'not e2e' || test $? -eq 5"
+e2e = "pytest tests/e2e -m e2e -v"
 validate = "sam validate"
 build = "sam build"
 deploy = "sam deploy --no-confirm-changeset --no-fail-on-empty-changeset"
@@ -38,3 +39,4 @@ select = ["E", "F", "I", "W", "UP"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["lambdas", "lambdas/orchestrator", "lambdas/process"]
+markers = ["e2e: hits the deployed AWS stack; opt-in via `task e2e`"]
