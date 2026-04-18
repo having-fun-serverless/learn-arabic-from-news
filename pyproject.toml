@@ -5,6 +5,8 @@ requires-python = ">=3.12"
 dependencies = [
     "boto3",
     "aws-lambda-powertools[all]",
+    "aws-durable-execution-sdk-python",
+    "feedparser",
 ]
 
 [dependency-groups]
@@ -14,6 +16,7 @@ dev = [
     "ruff",
     "taskipy",
     "requests",
+    "aws-durable-execution-sdk-python-testing",
 ]
 
 [tool.taskipy.tasks]
@@ -34,4 +37,4 @@ select = ["E", "F", "I", "W", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["lambdas"]
+pythonpath = ["lambdas", "lambdas/orchestrator", "lambdas/process"]

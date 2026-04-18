@@ -4,10 +4,6 @@ Description: learn-arabic-from-news — serverless backend
 
 Globals:
   Function:
-    Runtime: python3.12
-    Architectures:
-      - arm64
-    Timeout: 30
     Environment:
       Variables:
         POWERTOOLS_SERVICE_NAME: learn-arabic-from-news
@@ -37,3 +33,128 @@ Resources:
       TimeToLiveSpecification:
         AttributeName: ttl
         Enabled: true
+
+  ArticlesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub al-jarida-articles-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods: [GET, HEAD]
+            AllowedOrigins: ["*"]
+            AllowedHeaders: ["*"]
+            MaxAge: 3600
+
+  ArticlesOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub al-jarida-articles-oac
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  ArticlesDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: al-jarida baked articles
+        DefaultCacheBehavior:
+          TargetOriginId: articles-s3
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD]
+          CachedMethods: [GET, HEAD]
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Managed-CachingOptimized
+        Origins:
+          - Id: articles-s3
+            DomainName: !GetAtt ArticlesBucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+            OriginAccessControlId: !GetAtt ArticlesOAC.Id
+        PriceClass: PriceClass_100
+        HttpVersion: http2
+
+  ArticlesBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ArticlesBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontRead
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub ${ArticlesBucket.Arn}/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${ArticlesDistribution}
+
+  ProcessFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/process/
+      Handler: handler.lambda_handler
+      Runtime: python3.12
+      Architectures:
+        - arm64
+      MemorySize: 1024
+      Timeout: 300
+      Environment:
+        Variables:
+          ARTICLES_BUCKET: !Ref ArticlesBucket
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref ArticlesBucket
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+
+  OrchestratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/orchestrator/
+      Handler: handler.handler
+      Runtime: python3.12
+      Architectures:
+        - arm64
+      MemorySize: 256
+      Timeout: 60
+      DurableConfig:
+        ExecutionTimeout: 900
+        RetentionPeriodInDays: 7
+      Environment:
+        Variables:
+          ARTICLES_BUCKET: !Ref ArticlesBucket
+          PROCESS_FUNCTION_NAME: !Ref ProcessFunction
+      Policies:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicDurableExecutionRolePolicy
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MainTable
+        - S3CrudPolicy:
+            BucketName: !Ref ArticlesBucket
+        - LambdaInvokePolicy:
+            FunctionName: !Ref ProcessFunction
+      Events:
+        DailyCron:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 6 * * ? *)
+            Description: Daily BBC Arabic ingest at 06:00 UTC
+            Enabled: true
+
+Outputs:
+  ArticlesBucketName:
+    Value: !Ref ArticlesBucket
+  ArticlesDistributionDomain:
+    Value: !GetAtt ArticlesDistribution.DomainName
