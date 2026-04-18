@@ -125,7 +125,7 @@ Resources:
     Properties:
       CodeUri: lambdas/orchestrator/
       Handler: handler.handler
-      Runtime: python3.12
+      Runtime: python3.13
       Architectures:
         - arm64
       MemorySize: 256

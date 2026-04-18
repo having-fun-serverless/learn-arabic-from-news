@@ -140,4 +140,5 @@ def handler(event: dict[str, Any], context: DurableContext) -> dict[str, Any]:
         context.logger.info("no_new_articles")
         return context.step(index_step([]), name="index")
     processed = context.map(articles, _process_one, name="process_each")
-    return context.step(index_step(processed.to_list()), name="index")
+    processed.throw_if_error()
+    return context.step(index_step(processed.get_results()), name="index")
