@@ -1,0 +1,4 @@
+aws-durable-execution-sdk-python
+aws-lambda-powertools[all]
+boto3
+feedparser
