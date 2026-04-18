@@ -12,7 +12,6 @@ Globals:
       Variables:
         POWERTOOLS_SERVICE_NAME: learn-arabic-from-news
         TABLE_NAME: !Ref MainTable
-        SECRET_NAME: !Sub learn-arabic-from-news-creds
 
 Parameters:
   Stage:
@@ -20,16 +19,6 @@ Parameters:
     Default: prod
 
 Resources:
-  AppSecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      Name: !Sub learn-arabic-from-news-creds
-      GenerateSecretString:
-        SecretStringTemplate: '{"username": "admin"}'
-        GenerateStringKey: password
-        PasswordLength: 32
-        ExcludePunctuation: false
-
   MainTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -45,90 +34,6 @@ Resources:
           KeyType: HASH
         - AttributeName: sk
           KeyType: RANGE
-
-  ApiAccessLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/apigateway/learn-arabic-from-news
-      RetentionInDays: 30
-
-  Api:
-    Type: AWS::Serverless::HttpApi
-    Properties:
-      StageName: !Ref Stage
-      AccessLogSettings:
-        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
-        Format: >-
-          {"requestId":"$context.requestId","ip":"$context.identity.sourceIp",
-          "httpMethod":"$context.httpMethod","routeKey":"$context.routeKey",
-          "status":"$context.status","responseLength":"$context.responseLength"}
-      CorsConfiguration:
-        AllowOrigins:
-          - "*"
-        AllowMethods:
-          - GET
-          - POST
-          - OPTIONS
-        AllowHeaders:
-          - Content-Type
-          - Authorization
-      Auth:
-        DefaultAuthorizer: AppAuthorizer
-        Authorizers:
-          AppAuthorizer:
-            FunctionArn: !GetAtt AuthorizerFunction.Arn
-            AuthorizerPayloadFormatVersion: "2.0"
-            EnableSimpleResponses: true
-            Identity:
-              Headers:
-                - Authorization
-              ReauthorizeEvery: 300
-
-  AuthorizerFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: lambdas/authorizer/
-      Handler: handler.handler
-      MemorySize: 128
-      Timeout: 5
-      Policies:
-        - AWSSecretsManagerGetSecretValuePolicy:
-            SecretArn: !Ref AppSecret
-
-  AuthorizerInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt AuthorizerFunction.Arn
-      Action: lambda:InvokeFunction
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*"
-
-  ApiFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: lambdas/api/
-      Handler: handler.handler
-      MemorySize: 256
-      Timeout: 30
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref MainTable
-      Events:
-        GetItems:
-          Type: HttpApi
-          Properties:
-            ApiId: !Ref Api
-            Path: /api/items
-            Method: GET
-        CreateItem:
-          Type: HttpApi
-          Properties:
-            ApiId: !Ref Api
-            Path: /api/items
-            Method: POST
-
-Outputs:
-  ApiUrl:
-    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
-  SecretArn:
-    Value: !Ref AppSecret
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
