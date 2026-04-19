@@ -191,6 +191,15 @@ cython_debug/
 # AWS SAM
 .aws-sam/
 
+# Frontend (web/)
+web/node_modules/
+web/dist/
+web/.vite/
+web/*.local
+
+# Claude Code local config
+.claude/
+
 # Ruff stuff:
 .ruff_cache/
 

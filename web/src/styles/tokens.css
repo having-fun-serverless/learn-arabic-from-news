@@ -1,0 +1,322 @@
+/* ==========================================================================
+   Al-Jarida — Design Tokens
+   Desert + jewel palette, humanist-sans type, RTL-first, airy spacing.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Amiri+Quran&display=swap');
+
+:root {
+  /* --------------------------------------------------------------------------
+     COLORS — Desert base + jewel accents, warm-biased throughout
+     -------------------------------------------------------------------------- */
+
+  /* Sand / paper backgrounds */
+  --sand-50: #fdf9ef; /* highest — overlays on top of cards */
+  --sand-100: #fbf5e9; /* page background (default surface) */
+  --sand-200: #f4e9d1; /* raised card background */
+  --sand-300: #eaddbe; /* pressed / inset / disabled fill */
+  --sand-400: #d9c9a4; /* hairline on sand, subtle dividers */
+
+  /* Ink — warm near-black, never pure #000 */
+  --ink-900: #1e1a15; /* primary text, headlines */
+  --ink-700: #4a3f33; /* secondary text, body-meta */
+  --ink-500: #8a7a66; /* tertiary text, placeholders */
+  --ink-300: #b8a98e; /* disabled text */
+
+  /* Primary — ochre (CTAs, links on sand, streak) */
+  --ochre-50: #fbf0d9;
+  --ochre-100: #f4dfb0;
+  --ochre-500: #c68a2e; /* default */
+  --ochre-600: #a87122; /* hover */
+  --ochre-700: #815418; /* press / text on ochre-50 */
+
+  /* Secondary — teal (info, tags, progress, saved-word) */
+  --teal-50: #ddedee;
+  --teal-100: #b5d6d9;
+  --teal-500: #2e7f85;
+  --teal-600: #24686d;
+  --teal-700: #1a4e52;
+
+  /* Jewel deep-red — destructive, important flags only */
+  --red-50: #f4dcd7;
+  --red-500: #a23a2e;
+  --red-600: #832b22;
+
+  /* Olive — success / "learned" */
+  --olive-500: #6b7a3a;
+  --olive-600: #54612c;
+
+  /* Hairlines & overlays (warm-tinted, never neutral gray) */
+  --hairline: rgba(30, 26, 21, 0.08);
+  --hairline-strong: rgba(30, 26, 21, 0.14);
+  --scrim: rgba(30, 26, 21, 0.4);
+  --chrome-blur-bg: rgba(251, 245, 233, 0.7);
+
+  /* --------------------------------------------------------------------------
+     SEMANTIC COLORS — use these in components, not the raw tokens above
+     -------------------------------------------------------------------------- */
+
+  --bg-page: var(--sand-100);
+  --bg-card: var(--sand-200);
+  --bg-raised: var(--sand-50);
+  --bg-inset: var(--sand-300);
+
+  --fg-1: var(--ink-900); /* primary text */
+  --fg-2: var(--ink-700); /* secondary text */
+  --fg-3: var(--ink-500); /* tertiary / meta */
+  --fg-disabled: var(--ink-300);
+
+  --accent: var(--ochre-500);
+  --accent-hover: var(--ochre-600);
+  --accent-press: var(--ochre-700);
+  --accent-soft: var(--ochre-50);
+  --on-accent: var(--sand-50);
+
+  --info: var(--teal-500);
+  --info-soft: var(--teal-50);
+
+  --danger: var(--red-500);
+  --danger-soft: var(--red-50);
+
+  --success: var(--olive-500);
+
+  --border: var(--hairline);
+  --border-strong: var(--hairline-strong);
+  --focus-ring: var(--ochre-500);
+
+  /* --------------------------------------------------------------------------
+     TYPOGRAPHY
+     -------------------------------------------------------------------------- */
+
+  --font-he: 'Heebo', system-ui, -apple-system, sans-serif;
+  --font-ar: 'IBM Plex Sans Arabic', 'Heebo', system-ui, sans-serif;
+  --font-ar-disp: 'Amiri Quran', 'IBM Plex Sans Arabic', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Type scale — airy, mobile-first 18px base */
+  --fs-xs: 13px;
+  --fs-sm: 15px;
+  --fs-base: 18px;
+  --fs-md: 20px;
+  --fs-lg: 24px;
+  --fs-xl: 30px;
+  --fs-2xl: 38px;
+  --fs-3xl: 48px;
+  --fs-4xl: 64px;
+
+  /* Line heights — generous for vocalised Arabic */
+  --lh-tight: 1.2; /* display */
+  --lh-snug: 1.4; /* headings */
+  --lh-normal: 1.5; /* UI, labels */
+  --lh-relaxed: 1.7; /* body text (critical for tashkīl) */
+
+  /* Letter spacing */
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+
+  /* Weights */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+
+  /* --------------------------------------------------------------------------
+     SPACING — 4px base, airy scale
+     -------------------------------------------------------------------------- */
+
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* --------------------------------------------------------------------------
+     RADII
+     -------------------------------------------------------------------------- */
+
+  --r-xs: 4px; /* dividers, small dots */
+  --r-sm: 6px; /* chips, tags */
+  --r-md: 12px; /* buttons, inputs */
+  --r-lg: 20px; /* cards */
+  --r-xl: 28px; /* modals, sheets, feature cards */
+  --r-full: 9999px; /* avatars, pills, streak ring */
+
+  /* --------------------------------------------------------------------------
+     SHADOWS — warm-brown tinted, never black
+     -------------------------------------------------------------------------- */
+
+  --shadow-1: 0 1px 2px rgba(60, 40, 20, 0.06), 0 2px 8px rgba(60, 40, 20, 0.04);
+  --shadow-2: 0 8px 24px rgba(60, 40, 20, 0.1), 0 2px 6px rgba(60, 40, 20, 0.06);
+  --shadow-focus: 0 0 0 2px var(--sand-100), 0 0 0 4px var(--focus-ring);
+
+  /* --------------------------------------------------------------------------
+     MOTION — one easing, short durations, no bounces
+     -------------------------------------------------------------------------- */
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-mid: 240ms;
+  --dur-slow: 400ms;
+
+  /* --------------------------------------------------------------------------
+     LAYOUT
+     -------------------------------------------------------------------------- */
+
+  --reading-max-w: 640px; /* HE+AR lines are dense; shorter than typical */
+  --content-max-w: 1120px;
+  --tab-bar-h: 72px;
+  --top-bar-h: 56px;
+}
+
+/* ==========================================================================
+   BASE ELEMENT STYLES — Use these as starting defaults.
+   Components may override.
+   ========================================================================== */
+
+html {
+  direction: rtl;
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  background: var(--bg-page);
+  color: var(--fg-1);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-he);
+  font-weight: var(--fw-regular);
+}
+
+/* Arabic content blocks — apply to any element that contains AR */
+.ar,
+[lang='ar'] {
+  font-family: var(--font-ar);
+  line-height: var(--lh-relaxed);
+}
+.ar-display,
+[lang='ar'].display {
+  font-family: var(--font-ar-disp);
+  line-height: var(--lh-snug);
+}
+
+/* Headings — Hebrew-first defaults */
+h1,
+.h1 {
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-tight);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--space-4);
+  color: var(--fg-1);
+}
+h2,
+.h2 {
+  font-size: var(--fs-xl);
+  line-height: var(--lh-snug);
+  font-weight: var(--fw-bold);
+  margin: 0 0 var(--space-3);
+  color: var(--fg-1);
+}
+h3,
+.h3 {
+  font-size: var(--fs-lg);
+  line-height: var(--lh-snug);
+  font-weight: var(--fw-medium);
+  margin: 0 0 var(--space-3);
+  color: var(--fg-1);
+}
+h4,
+.h4 {
+  font-size: var(--fs-md);
+  line-height: var(--lh-snug);
+  font-weight: var(--fw-medium);
+  margin: 0 0 var(--space-2);
+  color: var(--fg-1);
+}
+
+p,
+.body {
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-1);
+  margin: 0 0 var(--space-4);
+}
+
+.body-sm {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+}
+.body-xs {
+  font-size: var(--fs-xs);
+  line-height: var(--lh-normal);
+}
+.meta {
+  font-size: var(--fs-sm);
+  color: var(--fg-3);
+  line-height: var(--lh-normal);
+}
+.overline {
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg-3);
+  font-weight: var(--fw-medium);
+  text-transform: none;
+}
+
+/* Display type — for Arabic article titles */
+.display-ar {
+  font-family: var(--font-ar-disp);
+  font-size: var(--fs-3xl);
+  line-height: var(--lh-tight);
+  color: var(--fg-1);
+}
+
+/* Links */
+a {
+  color: var(--accent-press);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease);
+}
+a:hover {
+  color: var(--accent-hover);
+}
+
+/* Focus — keyboard only */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+/* Text utilities */
+.text-muted {
+  color: var(--fg-2);
+}
+.text-dim {
+  color: var(--fg-3);
+}
+.text-accent {
+  color: var(--accent-press);
+}
+
+/* Reading-quality Arabic paragraph — applied to article body blocks */
+.ar-reading {
+  font-family: var(--font-ar);
+  font-size: 22px;
+  line-height: 2; /* extra-generous for tashkīl */
+  color: var(--ink-900);
+  font-weight: var(--fw-regular);
+}
