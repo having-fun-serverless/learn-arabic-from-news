@@ -158,12 +158,13 @@ def _bake(article: dict[str, Any], today: str) -> dict[str, Any]:
         sentences.append({"id": sid, "tokenRange": [start, len(tokens)]})
 
     title = article.get("title", "") or ""
+    diacritized_title = " ".join(w["diacritized"] for w in _analyze_sentence(title)) or title
     return {
         "id": f"{today}/bbc-{article['slug']}",
         "source": "bbc",
         "sourceUrl": article["url"],
         "publishedAt": article.get("publishedAt", ""),
-        "title": {"raw": title, "diacritized": title},
+        "title": {"raw": title, "diacritized": diacritized_title},
         "tokens": tokens,
         "sentences": sentences,
     }
