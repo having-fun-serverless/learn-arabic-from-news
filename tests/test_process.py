@@ -1,6 +1,6 @@
 """Unit tests for the per-article bake function.
 
-The CAMeL Tools morphology + AWS Translate path is mocked: those live in the
+The CAMeL Tools morphology + Bedrock path is mocked: those live in the
 deployed container image, not the dev machine. The e2e suite covers the real
 pipeline against the deployed stack.
 """
@@ -35,7 +35,7 @@ def _fake_analysis(words: list[str]) -> list[dict[str, str]]:
 
 @pytest.fixture(autouse=True)
 def _stub_nlp(monkeypatch):
-    """Replace CAMeL/Translate touchpoints with deterministic fakes."""
+    """Replace CAMeL/Bedrock touchpoints with deterministic fakes."""
     monkeypatch.setattr(
         process_handler,
         "_split_sentences",
@@ -48,8 +48,11 @@ def _stub_nlp(monkeypatch):
     )
     monkeypatch.setattr(
         process_handler,
-        "_lookup_gloss_cached",
-        lambda lemmas: {lemma: f"he:{lemma}" for lemma in lemmas},
+        "_translate",
+        lambda sentences, lemmas: (
+            [f"he:{s}" for s in sentences],
+            {lemma: f"he:{lemma}" for lemma in lemmas},
+        ),
     )
     monkeypatch.setattr(process_handler, "_freq_table", lambda: {})
 
@@ -60,12 +63,16 @@ def test_bake_produces_expected_schema():
     assert baked["source"] == "bbc"
     assert baked["sourceUrl"] == SAMPLE_ARTICLE["url"]
     assert baked["title"]["raw"] == "عنوان تجريبي"
+    assert baked["title"]["translationHe"] == f"he:{SAMPLE_ARTICLE['title']}"
 
     sentences = baked["sentences"]
     tokens = baked["tokens"]
     assert len(sentences) >= 2
     assert sentences[0]["tokenRange"][0] == 0
     assert sentences[-1]["tokenRange"][1] == len(tokens)
+    for s in sentences:
+        assert "translationHe" in s
+        assert s["translationHe"].startswith("he:")
     for token in tokens:
         assert {"i", "raw", "diacritized", "lemma", "pos", "gloss_he", "freqRank", "sentenceId"} <= set(token)
         assert token["gloss_he"] == f"he:{token['lemma']}"

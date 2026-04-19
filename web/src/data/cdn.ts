@@ -25,14 +25,15 @@ export interface Token {
   diacritized: string;
   lemma: string;
   pos: string;
-  gloss_he: string;
+  gloss_he: string | null;
   freqRank: number | null;
-  sentenceId: number;
+  sentenceId?: number;
 }
 
 export interface Sentence {
   id: number;
   tokenRange: [number, number];
+  translationHe?: string;
 }
 
 export interface Article {
@@ -40,7 +41,7 @@ export interface Article {
   source: string;
   sourceUrl: string;
   publishedAt: string;
-  title: { raw: string; diacritized: string };
+  title: { raw: string; diacritized: string; tokens?: Token[]; translationHe?: string };
   tokens: Token[];
   sentences: Sentence[];
 }

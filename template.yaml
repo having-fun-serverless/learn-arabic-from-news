@@ -123,8 +123,8 @@ Resources:
         - Statement:
             - Effect: Allow
               Action:
-                - translate:TranslateText
-              Resource: "*"
+                - bedrock:InvokeModel
+              Resource: !Sub arn:${AWS::Partition}:bedrock:us-east-1::foundation-model/google.gemma-3-12b-it
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: lambdas/process
