@@ -232,17 +232,30 @@ button {
 }
 
 .ar-word {
-  /* Vertical padding fills most of the body's line-height (2em → 44px) so
-     adjacent lines don't leave a dead gap that mobile fuzzy-tap targeting
-     snaps to the wrong word. The button box (~38px) stays inside the line
-     box, so no reflow. touch-action + -webkit-tap-highlight-color kill the
-     iOS double-tap zoom delay so the first tap lands cleanly. */
+  /* Why this looks fussy: p.ar-body has line-height: 2 (44px) and font-size 22px.
+     Each .ar-word is inline-block, so its outer box = inherited line-height
+     (44px) + its own vertical padding. With ANY positive vertical padding the
+     box exceeds 44px and the next row's buttons overlap into this row's visible
+     glyph area. Later buttons paint over earlier ones, so a click on a word's
+     bottom half lands on the word in the row BELOW. That was the real "picks
+     the word beneath it" bug — fuzzy-tap on mobile only made it more obvious.
+
+     Fix: shrink the button's own line-height to font-size (22px) and let
+     padding fill the rest of the parent line-height. Box = 22 + 11 + 11 = 44px,
+     exactly one parent line, so adjacent rows touch at the line boundary with
+     ZERO overlap. The visible glyph stays centered with 11px of click padding
+     above/below it — a generous target without invading the next row.
+
+     touch-action + -webkit-tap-highlight-color also kill the iOS 300ms
+     double-tap zoom delay so the first tap registers cleanly. */
   display: inline-block;
-  padding: 8px 4px;
+  padding: 11px 4px;
   border-radius: var(--r-xs);
   background: none;
   border: 0;
   font: inherit;
+  /* MUST come after `font: inherit` — the shorthand resets line-height. */
+  line-height: 1;
   color: inherit;
   cursor: pointer;
   touch-action: manipulation;
