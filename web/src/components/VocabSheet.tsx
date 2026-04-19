@@ -78,14 +78,17 @@ export default function VocabSheet({ token, open, onClose }: Props) {
                 {token.diacritized || token.raw}
               </div>
               {supported && (
+                // Buttons stay enabled even when hasArabicVoice is false:
+                // iOS Safari only populates the voice list AFTER the first
+                // user-gesture .speak() call, so disabling here would deadlock.
+                // Tooltip hints when no Arabic voice was detected, but tap still tries.
                 <div className="sheet-actions">
                   <button
                     type="button"
                     className="icon-btn"
                     aria-label="השמעה איטית"
                     onClick={() => speak(token.diacritized || token.raw, { rate: 0.5 })}
-                    disabled={!hasArabicVoice}
-                    title={hasArabicVoice ? 'השמעה איטית' : 'אין קול ערבי מותקן במכשיר'}
+                    title={hasArabicVoice ? 'השמעה איטית' : 'השמעה איטית (ייתכן שאין קול ערבי במכשיר)'}
                   >
                     <SlowSpeakerIcon />
                   </button>
@@ -94,8 +97,7 @@ export default function VocabSheet({ token, open, onClose }: Props) {
                     className="icon-btn"
                     aria-label="השמעה"
                     onClick={() => speak(token.diacritized || token.raw)}
-                    disabled={!hasArabicVoice}
-                    title={hasArabicVoice ? 'השמעה' : 'אין קול ערבי מותקן במכשיר'}
+                    title={hasArabicVoice ? 'השמעה' : 'השמעה (ייתכן שאין קול ערבי במכשיר)'}
                   >
                     <SpeakerIcon />
                   </button>
