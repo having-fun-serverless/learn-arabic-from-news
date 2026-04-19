@@ -89,13 +89,14 @@ def write_index(bucket: str) -> dict[str, Any]:
         article = json.loads(body)
         article_id = article["id"]
         date, slug = article_id.split("/", 1)
+        title_obj = article.get("title", {})
         entries.append(
             {
                 "id": article_id,
                 "date": date,
                 "slug": slug,
                 "source": article.get("source", "bbc"),
-                "title": article.get("title", {}).get("raw", ""),
+                "title": title_obj.get("diacritized") or title_obj.get("raw", ""),
                 "tokenCount": len(article.get("tokens", [])),
             }
         )

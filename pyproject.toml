@@ -27,6 +27,7 @@ e2e = "pytest tests/e2e -m e2e -v"
 validate = "sam validate"
 build = "sam build"
 deploy = "sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --resolve-image-repos"
+deploy-web = "bash web/deploy.sh"
 check = "task lint && task test && task validate && task build"
 
 [tool.ruff]

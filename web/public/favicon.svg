@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Al-Jarida favicon: Arabic letter ج (jīm) — the distinctive letter in الجريدة.
+       Sand background + ochre glyph match the design tokens (sand-100 / ochre-700). -->
+  <rect width="32" height="32" rx="6" fill="#fbf5e9"/>
+  <text x="16" y="24" text-anchor="middle"
+        font-family="'Amiri Quran','IBM Plex Sans Arabic','Noto Naskh Arabic',serif"
+        font-size="22" font-weight="500" fill="#815418">ج</text>
+</svg>
