@@ -32,9 +32,9 @@ def stack():
     cfn = boto3.client("cloudformation", region_name=REGION)
 
     def physical(logical_id: str) -> str:
-        return cfn.describe_stack_resource(
-            StackName=STACK_NAME, LogicalResourceId=logical_id
-        )["StackResourceDetail"]["PhysicalResourceId"]
+        return cfn.describe_stack_resource(StackName=STACK_NAME, LogicalResourceId=logical_id)["StackResourceDetail"][
+            "PhysicalResourceId"
+        ]
 
     return {
         "orchestrator": physical("OrchestratorFunction"),
@@ -54,9 +54,7 @@ def clean_today(stack, today_prefix):
     s3 = boto3.client("s3", region_name=REGION, endpoint_url=f"https://s3.{REGION}.amazonaws.com")
     ddb = boto3.resource("dynamodb", region_name=REGION).Table(stack["table"])
 
-    pages = s3.get_paginator("list_objects_v2").paginate(
-        Bucket=stack["bucket"], Prefix=today_prefix
-    )
+    pages = s3.get_paginator("list_objects_v2").paginate(Bucket=stack["bucket"], Prefix=today_prefix)
     source_urls: list[str] = []
     delete_keys: list[dict] = []
     for page in pages:
@@ -92,9 +90,7 @@ def test_orchestrator_bakes_articles_end_to_end(stack, today_prefix, clean_today
 
     keys = [
         obj["Key"]
-        for page in s3.get_paginator("list_objects_v2").paginate(
-            Bucket=stack["bucket"], Prefix=today_prefix
-        )
+        for page in s3.get_paginator("list_objects_v2").paginate(Bucket=stack["bucket"], Prefix=today_prefix)
         for obj in page.get("Contents", [])
     ]
     assert keys, f"no articles under {today_prefix}"
@@ -105,9 +101,7 @@ def test_orchestrator_bakes_articles_end_to_end(stack, today_prefix, clean_today
     assert isinstance(sample["tokens"], list) and sample["tokens"], "no tokens"
     assert {"i", "raw", "diacritized", "lemma", "pos"} <= set(sample["tokens"][0])
 
-    index = json.loads(
-        s3.get_object(Bucket=stack["bucket"], Key="articles/index.json")["Body"].read()
-    )
+    index = json.loads(s3.get_object(Bucket=stack["bucket"], Key="articles/index.json")["Body"].read())
     today_in_index = [a for a in index["articles"] if a["date"] == dt.date.today().isoformat()]
     assert len(today_in_index) == len(keys)
 

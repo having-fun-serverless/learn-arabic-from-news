@@ -104,21 +104,31 @@ Resources:
   ProcessFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambdas/process/
-      Handler: handler.lambda_handler
-      Runtime: python3.12
+      PackageType: Image
       Architectures:
         - arm64
-      MemorySize: 1024
+      MemorySize: 2048
       Timeout: 300
       Environment:
         Variables:
           ARTICLES_BUCKET: !Ref ArticlesBucket
+          # camel-tools mkdirs ~/.camel_tools at import even when CAMELTOOLS_DATA
+          # is set; default $HOME is read-only in Lambda. Redirect to /tmp.
+          HOME: /tmp
       Policies:
         - S3WritePolicy:
             BucketName: !Ref ArticlesBucket
         - DynamoDBCrudPolicy:
             TableName: !Ref MainTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - translate:TranslateText
+              Resource: "*"
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: lambdas/process
+      DockerTag: process
 
   OrchestratorFunction:
     Type: AWS::Serverless::Function
