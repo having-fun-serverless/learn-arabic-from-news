@@ -232,13 +232,21 @@ button {
 }
 
 .ar-word {
-  padding: 1px 3px;
+  /* Vertical padding fills most of the body's line-height (2em → 44px) so
+     adjacent lines don't leave a dead gap that mobile fuzzy-tap targeting
+     snaps to the wrong word. The button box (~38px) stays inside the line
+     box, so no reflow. touch-action + -webkit-tap-highlight-color kill the
+     iOS double-tap zoom delay so the first tap lands cleanly. */
+  display: inline-block;
+  padding: 8px 4px;
   border-radius: var(--r-xs);
   background: none;
   border: 0;
   font: inherit;
   color: inherit;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: background var(--dur-fast) var(--ease);
 }
 
