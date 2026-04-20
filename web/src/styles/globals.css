@@ -232,13 +232,34 @@ button {
 }
 
 .ar-word {
-  padding: 1px 3px;
+  /* The "tap selects the word beneath it" bug had TWO causes — fixing only one
+     left the title broken. Both must hold:
+
+     1. ZERO vertical padding (here). An inline-block's outer box height = inherited
+        line-height + own vertical padding. ANY positive vertical padding makes the
+        box taller than the parent's line, so adjacent rows overlap and later
+        buttons paint over earlier ones.
+     2. NO wrapper element around the button (see Article.tsx). A wrapping
+        <span> creates its own inline line-box that, in tightly-leaded contexts
+        like h1.ar-title (line-height 1.2 = 57.6px), can expand to ~117px — the
+        next row's span then overlaps the previous row's button.
+
+     With both fixes, box height ≡ parent line-height in every context —
+     p.ar-body (44px) and h1.ar-title (57.6px) alike — and rows touch at the
+     boundary with zero overlap.
+
+     touch-action + -webkit-tap-highlight-color kill the iOS 300ms double-tap
+     zoom delay so the first tap registers cleanly. */
+  display: inline-block;
+  padding: 0 4px;
   border-radius: var(--r-xs);
   background: none;
   border: 0;
   font: inherit;
   color: inherit;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: background var(--dur-fast) var(--ease);
 }
 
