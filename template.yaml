@@ -213,6 +213,7 @@ Resources:
         - arm64
       MemorySize: 256
       Timeout: 60
+      AutoPublishAlias: live
       DurableConfig:
         ExecutionTimeout: 900
         RetentionPeriodInDays: 7
