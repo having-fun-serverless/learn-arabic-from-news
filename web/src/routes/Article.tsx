@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Link, useParams } from 'wouter';
 import VocabSheet from '../components/VocabSheet';
 import { useArticle, type Sentence, type Token } from '../data/cdn';
@@ -42,10 +42,18 @@ export default function Article() {
       <h1 className="ar-title" dir="rtl" lang="ar">
         {titleTokens && titleTokens.length > 0
           ? titleTokens.map((t, idx) => (
-              <span key={t.i}>
+              // Render Word + trailing space as siblings (not inside a wrapper <span>).
+              // A wrapper span around an inline-block button creates an inline line-box
+              // that, in tightly-leaded contexts (h1.ar-title: line-height 1.2 = 57.6px),
+              // expands to 117px — taller than the visual line — and the next row's span
+              // overlaps the previous row's button, so clicks on the lower half of a
+              // word land on the row below. With no wrapper, only the button (inline-
+              // block) and a text-node space sit on the line; the line-box stays at the
+              // parent's line-height and rows touch with zero overlap.
+              <Fragment key={t.i}>
                 <Word token={t} isSelected={selected === t} onSelect={() => setSelected(t)} />
                 {idx < titleTokens.length - 1 ? ' ' : ''}
-              </span>
+              </Fragment>
             ))
           : data.title.diacritized}
       </h1>
@@ -102,10 +110,11 @@ function SentenceP({ sentence, tokens, selected, onSelect }: SentenceProps) {
     <div className="sentence-block">
       <p className="ar-body" dir="rtl" lang="ar">
         {slice.map((t, idx) => (
-          <span key={t.i}>
+          // See note on title above — same reason: no wrapper span around the button.
+          <Fragment key={t.i}>
             <Word token={t} isSelected={selected === t} onSelect={() => onSelect(t)} />
             {idx < slice.length - 1 ? ' ' : ''}
-          </span>
+          </Fragment>
         ))}
       </p>
       {sentence.translationHe && (
