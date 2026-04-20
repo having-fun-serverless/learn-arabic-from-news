@@ -84,8 +84,7 @@ export default function VocabSheet({ token, open, onClose }: Props) {
                     className="icon-btn"
                     aria-label="השמעה איטית"
                     onClick={() => speak(token.diacritized || token.raw, { rate: 0.5 })}
-                    disabled={!hasArabicVoice}
-                    title={hasArabicVoice ? 'השמעה איטית' : 'אין קול ערבי מותקן במכשיר'}
+                    title={hasArabicVoice ? 'השמעה איטית' : 'השמעה איטית (ייתכן שאין קול ערבי במכשיר)'}
                   >
                     <SlowSpeakerIcon />
                   </button>
@@ -94,8 +93,7 @@ export default function VocabSheet({ token, open, onClose }: Props) {
                     className="icon-btn"
                     aria-label="השמעה"
                     onClick={() => speak(token.diacritized || token.raw)}
-                    disabled={!hasArabicVoice}
-                    title={hasArabicVoice ? 'השמעה' : 'אין קול ערבי מותקן במכשיר'}
+                    title={hasArabicVoice ? 'השמעה' : 'השמעה (ייתכן שאין קול ערבי במכשיר)'}
                   >
                     <SpeakerIcon />
                   </button>
